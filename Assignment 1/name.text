@@ -1,0 +1,50 @@
+;Abhishek Wahane
+;203165
+;A4 Batch
+;Assignment 1
+
+section .data
+    msg db 'Enter your name : ',10
+    msglen equ $-msg
+    print db 'Your name is : ',10
+    printlen equ $-print
+    
+section .bss
+    name resb 30
+
+section .text
+    global _start
+    
+_start:
+    mov rax,1
+    mov rdi,1
+    mov rsi,msg
+    mov rdx,19
+syscall
+    mov rax,0
+    mov rdi,0
+    mov rsi,name
+    mov rdx,30
+syscall
+    sub rax,1
+    mov rbx,rax
+    mov rax,1
+    mov rdi,1
+    mov rsi,print
+    mov rdx,50
+syscall
+    mov rax,60
+    mov rdi,0
+syscall
+
+
+
+;INPUT:
+;Abhishek Wahane
+
+;OUTPUT:
+;Enter your name : 
+;Abhihek Wahane
+;Your name is : 
+;Abhihek Wahane
+

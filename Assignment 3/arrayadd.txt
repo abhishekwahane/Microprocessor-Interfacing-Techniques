@@ -1,0 +1,117 @@
+;203165
+;Abhishek Wahane
+;A4 Batch
+;Assignment 3
+
+section .data
+	msg db "Enter number: ", 10
+	msglen equ $-msg 
+    
+	msgl db "Number converted to packed format successfully", 10
+	msglen1 equ $-msgl
+
+	msgp db "Addition: ",10
+	msglenp equ $-msgp
+    
+	count db 5
+
+section .bss
+	num resb 3
+	arr resb 5
+	sum resb 2
+	temp resb 2
+	temp1 resb 1
+
+	%macro rw 4
+		mov rax,%1
+		mov rdi,%2
+		mov rsi,%3
+		mov rdx,%4
+		syscall
+	%endmacro
+    
+section .text
+	global _start
+    
+	_start:
+   
+		mov rbp,arr
+   
+	again: 	rw 1,1,msg,msglen
+		rw 0,0,num,3
+    
+		mov al,0
+		mov rsi,num
+          
+	up: 	mov bl, byte[rsi]
+		cmp bl,0AH
+		je next
+		cmp bl,39H
+		jbe down
+		sub bl,07H
+       
+	down: 	sub bl,30H
+		rol al,4
+		add al,bl
+		inc rsi
+		jnz up
+          
+          
+	next: 	mov byte[rbp],al
+		inc rbp
+		dec byte[count]
+		jnz again
+		
+		rw 1,1,msgp,msglenp
+
+		mov rsi,arr
+		mov cx,5
+		mov ax,0
+
+	again1:	mov bl,byte[rsi]
+		add al,bl
+		jnc skip
+		inc ah
+
+	skip:	inc rsi
+		dec cx
+		jnz again1
+		mov[sum],ax
+		call disp
+    
+	rw 60,0,0,0
+
+	disp:	mov bp,4
+		mov ax,[sum]
+	
+	again2:	rol ax,4
+		mov [temp],ax
+		and ax,0fh
+		cmp al,09h
+		jbe down1
+		add al,07H
+
+	down1:	add al,30H
+		mov [temp1],al
+		rw 1,1,temp1,1
+		mov ax,[temp]
+		dec bp
+		jnz again2
+
+ret
+
+;OUTPUT
+;Enter number: 
+;FF
+;Enter number: 
+;FF
+;Enter number: 
+;FF
+;Enter number: 
+;FF
+;Enter number: 
+;FF
+;Addition: 
+;04FBguest-lZpd18@c04l1007:~$
+
+

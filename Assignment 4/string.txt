@@ -1,0 +1,105 @@
+
+section .data
+msgmenu db 10,"MENU"
+        db 10,"1.Enter String"
+        db 10,"2.String Length"
+        db 10,"3.Palindrome"
+        db 10,"4.Exit"
+        db 10,"Enter your choice",10
+msgmenulen equ $-msgmenu
+msg db 10,"Enter your string",10    
+msglen equ $-msg  
+msg1 db 10,"The string is",10
+msglen1 equ $-msg1 
+msg2 db 10,"The Length of the string is",10
+msglen2 equ $-msg2  
+msg3 db 10,"It is not Palindrome.",10    
+msglen3 equ $-msg3 
+msg4 db 10,"It is Palindrome.",10    
+msglen4 equ $-msg4 
+wrng db 10,"Wrong Input",10    
+wrnglen equ $-wrng
+
+section .bss
+choice resb 2
+str1 resb 20
+len resb 1
+count1 resb 1
+count2 resb 1
+
+%macro rw 4
+mov rax,%1
+mov rdi,%2
+mov rsi,%3
+mov rdx,%4
+syscall
+%endmacro
+
+section .text
+global _start
+_start:
+
+rw 1,1,msgmenu,msgmenulen       
+rw 0,0,choice,2                 
+cmp byte[choice],31h
+je L1                              
+cmp byte[choice],32h
+je L2				  
+cmp byte[choice],33h
+je L3				
+cmp byte[choice],34h
+je L4				
+
+rw 1,1,wrng,wrnglen		
+jmp _start
+
+L1:
+  rw 1,1,msg,msglen              
+  rw 0,0,str1,20		
+  dec rax			
+  mov [len],rax                 
+  mov [count1],rax
+  mov [count2],rax
+  rw 1,1,msg1,msglen1
+  rw 1,1,str1,20                
+  jmp _start
+  
+L2:
+  rw 1,1,msg2,msglen2       
+  add byte[len],30h		
+  rw 1,1,len,1                
+  jmp _start
+  
+L3:
+  mov rsi,str1			
+  mov rdi,str1			
+  
+  ll1:				 
+     inc rdi			
+     dec byte[count1]		
+     jnz ll1
+  dec rdi			
+  
+  up:				 
+     mov al,[rsi]
+     cmp al,[rdi]
+     je ll2
+     rw 1,1,msg3,msglen3	
+     
+  ll2:					
+     inc rsi				
+     dec rdi			
+     dec byte[count2]
+     jnz up
+  
+  rw 1,1,msg4,msglen4         
+  jmp _start  
+  
+L4:
+  mov rax,60                      
+  mov rdi,0
+  syscall    
+  
+
+   
+  
